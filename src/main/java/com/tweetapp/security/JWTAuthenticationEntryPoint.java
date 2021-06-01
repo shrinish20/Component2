@@ -43,8 +43,6 @@ public class JWTAuthenticationEntryPoint implements AuthenticationEntryPoint {
 			status = "Invalid JWT Token";
 		} else if (signature != null) {
 			status = "JWT Signature is not Valid";
-		} else {
-			status = "Unsupported JWT Token";
 		}
 		ServletServerHttpResponse resp = new ServletServerHttpResponse(response);
 		resp.setStatusCode(HttpStatus.UNAUTHORIZED);

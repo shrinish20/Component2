@@ -6,7 +6,7 @@ public class JWTResponse {
 	
 	private String accessToken;
 	
-	private String refreshToken;
+//	private String refreshToken;
 	
 	private String Type = "Bearer";
 
@@ -14,11 +14,11 @@ public class JWTResponse {
 	 * @param loginStatus
 	 * @param accessToken
 	 */
-	public JWTResponse(String loginStatus, String accessToken, String refreshToken ) {
+	public JWTResponse(String loginStatus, String accessToken) {
 		
 		this.loginStatus = loginStatus;
 		this.accessToken = accessToken;
-		this.refreshToken = refreshToken;
+//		this.refreshToken = refreshToken;
 	}
 
 	/**
@@ -56,19 +56,19 @@ public class JWTResponse {
 		this.accessToken = accessToken;
 	}
 
-	/**
-	 * @return the refreshToken
-	 */
-	public String getRefreshToken() {
-		return refreshToken;
-	}
-
-	/**
-	 * @param refreshToken the refreshToken to set
-	 */
-	public void setRefreshToken(String refreshToken) {
-		this.refreshToken = refreshToken;
-	}
+//	/**
+//	 * @return the refreshToken
+//	 */
+//	public String getRefreshToken() {
+//		return refreshToken;
+//	}
+//
+//	/**
+//	 * @param refreshToken the refreshToken to set
+//	 */
+//	public void setRefreshToken(String refreshToken) {
+//		this.refreshToken = refreshToken;
+//	}
 
 	/**
 	 * @return the type

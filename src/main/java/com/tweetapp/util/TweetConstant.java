@@ -24,6 +24,8 @@ public class TweetConstant {
 	
 	public static final String KAFKA_TOPIC = "tweetTopic";
 	
+	public static final String RESET_SUCCESSFUL = "Password Re-setted Successfully";
+	
 	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
 }

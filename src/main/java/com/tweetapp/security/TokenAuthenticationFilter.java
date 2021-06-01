@@ -66,11 +66,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 	}
 
-	private void allowForRefreshToken(ExpiredJwtException ex, HttpServletRequest request) {
-		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-				null, null, null);
-		SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-		request.setAttribute("claims", ex.getClaims());
-
-	}
+//	private void allowForRefreshToken(ExpiredJwtException ex, HttpServletRequest request) {
+//		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+//				null, null, null);
+//		SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+//		request.setAttribute("claims", ex.getClaims());
+//
+//	}
 }

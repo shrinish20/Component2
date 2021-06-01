@@ -41,7 +41,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(BadCredentialsException.class)
 	public ResponseEntity<Object> credentialException(BadCredentialsException exception) {
 		List<?> defaultList = Collections.EMPTY_LIST;
-		CustomResponse response = new CustomResponse(HttpStatus.UNAUTHORIZED, "Authenticaton Failure - " + exception.getMessage(), LocalDateTime.now(),
+		CustomResponse response = new CustomResponse(HttpStatus.UNAUTHORIZED, exception.getMessage(), LocalDateTime.now(),
 				defaultList);
 		return ResponseEntity.status(response.getStatus()).body(response);
 	}	

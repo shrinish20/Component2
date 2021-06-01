@@ -46,7 +46,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @EnableAutoConfiguration
 @RequestMapping(value = "/api/v1.0/tweets")
-@CrossOrigin(origins="http://localhost:3000")
 public class UserController {
 
 	private UserService userService;
@@ -75,27 +74,27 @@ public class UserController {
 		}
 		final UserDetails userDetails = userService.loadUserByUsername(user.getLoginId());
 		final String accessToken = jwtUtil.generateToken(userDetails, "Access", request);
-		final String refreshToken = jwtUtil.generateToken(userDetails, "Refresh", request);		
-		JWTResponse response = new JWTResponse("Login Successful", accessToken, refreshToken);
+//		final String refreshToken = jwtUtil.generateToken(userDetails, "Refresh", request);		
+		JWTResponse response = new JWTResponse("Login Successful", accessToken);
 		return new ResponseEntity<JWTResponse>(response, HttpStatus.OK);		
 	}
 	
-	@RequestMapping(value = "/refreshToken", method = RequestMethod.POST, consumes = TweetConstant.APPLICATION_JSON)
-	public ResponseEntity<?> refresh(@RequestBody JWTResponse jwtResponse, HttpServletRequest request) throws AuthenticationCredentialsNotFoundException{
-		final String userName = jwtUtil.getUsernameFromToken(jwtResponse.getRefreshToken(), request);
-		final UserDetails userDetails = userService.loadUserByUsername(userName);
-		if(jwtUtil.isTokenExpired(jwtResponse.getRefreshToken(), request)) {
-			throw new JwtTokenException("Refresh Token Has Expired");
-		}
-		try {
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword()));
-		} catch (Exception e) {
-			throw new BadCredentialsException("Invalid Credentials");
-		}
-		final String accessToken = jwtUtil.generateToken(userDetails, "Access", request);
-		JWTResponse response = new JWTResponse("Access Token Re-generated", accessToken, jwtResponse.getRefreshToken());
-		return new ResponseEntity<JWTResponse>(response, HttpStatus.OK);	
-	}
+//	@RequestMapping(value = "/refreshToken", method = RequestMethod.POST, consumes = TweetConstant.APPLICATION_JSON)
+//	public ResponseEntity<?> refresh(@RequestBody JWTResponse jwtResponse, HttpServletRequest request) throws AuthenticationCredentialsNotFoundException{
+//		final String userName = jwtUtil.getUsernameFromToken(jwtResponse.getRefreshToken(), request);
+//		final UserDetails userDetails = userService.loadUserByUsername(userName);
+//		if(jwtUtil.isTokenExpired(jwtResponse.getRefreshToken(), request)) {
+//			throw new JwtTokenException("Refresh Token Has Expired");
+//		}
+//		try {
+//			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword()));
+//		} catch (Exception e) {
+//			throw new BadCredentialsException("Invalid Credentials");
+//		}
+//		final String accessToken = jwtUtil.generateToken(userDetails, "Access", request);
+//		JWTResponse response = new JWTResponse("Access Token Re-generated", accessToken, jwtResponse.getRefreshToken());
+//		return new ResponseEntity<JWTResponse>(response, HttpStatus.OK);	
+//	}
 
 	@ApiOperation(value = "Retrieves list of all Users")
 	@RequestMapping(value = "/users/all", method = RequestMethod.GET, produces = TweetConstant.APPLICATION_JSON)
@@ -137,7 +136,8 @@ public class UserController {
 		LOGGER.info("Entering searchByUsername() API :::: {}");
 		CustomResponse response;
 		User userObj = userService.searchByUsername(loginId);
-		List<User> userList = Arrays.asList(userObj);
+		
+		List<User> userList = (userObj != null) ? Arrays.asList(userObj): null;
 		if (userList == null) {
 			LOGGER.error("User Not Found");
 			throw new EntityNotFoundException("User Not Found");
@@ -146,6 +146,21 @@ public class UserController {
 					userList);
 		}
 		LOGGER.info("Exiting searchByUsername() API :::: {}");
+		return new ResponseEntity<CustomResponse>(response, response.getStatus());
+	}
+	
+	@ApiOperation(value = "To Reset Password")
+	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST, consumes = TweetConstant.APPLICATION_JSON)
+	public ResponseEntity<CustomResponse> resetPassword(@RequestBody User user) {
+		LOGGER.info("Entering resetPassword() API :::: {}");
+		CustomResponse response;
+		String result = userService.resetPassword(user);
+		if ("Success".equalsIgnoreCase(result)) {
+			response = new CustomResponse(HttpStatus.OK, TweetConstant.RESET_SUCCESSFUL, LocalDateTime.now());
+		} else {
+			response = new CustomResponse(HttpStatus.UNPROCESSABLE_ENTITY, result, LocalDateTime.now());
+		}
+		LOGGER.info("Exiting resetPassword() API :::: {}");
 		return new ResponseEntity<CustomResponse>(response, response.getStatus());
 	}
 

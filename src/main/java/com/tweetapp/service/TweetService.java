@@ -1,6 +1,7 @@
 package com.tweetapp.service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -45,8 +46,13 @@ public class TweetService {
 
 	public String postTweet(Tweet tweet, String loginId) {
 		LOGGER.info("Entering postTweet() service :::: {}");
+		List<Tweet> tweetList = new ArrayList<Tweet>();
 		User userObj = userRepo.findByLoginId(loginId);
-		List<Tweet> tweetList = userObj.getTweetList();
+		if(userObj.getTweetList() != null) {
+			tweetList = userObj.getTweetList();			
+		}		
+		tweet.setFirstName(userObj.getFirstName());
+		tweet.setLastName(userObj.getLastName());
 		Tweet resObj = tweetRepo.save(tweet);
 		if (resObj != null) {
 			tweetList.add(tweet);

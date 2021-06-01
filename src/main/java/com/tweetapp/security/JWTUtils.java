@@ -104,7 +104,7 @@ public class JWTUtils {
 		try {
 			return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
 		} catch (ExpiredJwtException exp) {
-			// request.setAttribute("Expired", exp.getMessage());
+			request.setAttribute("Expired", exp.getMessage());
 			throw new ExpiredJwtException(null, null, exp.getMessage());
 		} catch (MalformedJwtException exp) {
 			request.setAttribute("Malformed", exp.getMessage());
@@ -128,7 +128,7 @@ public class JWTUtils {
 		if ("Access".equalsIgnoreCase(token)) {
 			return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername())
 					.setIssuedAt(new Date(System.currentTimeMillis()))
-					.setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiraton))
+					.setExpiration(new Date(System.currentTimeMillis() + (accessTokenExpiraton*1000)))
 					.signWith(SignatureAlgorithm.HS512, secretKey).compact();
 		} else {
 			return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername())

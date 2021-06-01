@@ -5,6 +5,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,6 +27,9 @@ public class UserService implements UserDetailsService{
 	public UserService(UserRepository userRepo) {
 		this.userRepo = userRepo;
 	}
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TweetService.class);
 	
@@ -61,6 +69,17 @@ public class UserService implements UserDetailsService{
 		User userObj = userRepo.findByLoginId(loginId);
 		LOGGER.info("Exiting searchByUsername() service :::: {}");
 		return userObj;
+	}
+
+	public String resetPassword(User user) {
+		LOGGER.info("Entering resetPassword() service :::: {}");
+		Query query = new Query();
+		query.addCriteria(Criteria.where("loginId").is(user.getLoginId()));
+		Update update = new Update();
+		update.set("userPassword", user.getUserPassword());
+		User resObj = mongoTemplate.findAndModify(query, update, User.class);		
+		LOGGER.info("Exiting resetPassword() service :::: {}");
+		return (resObj != null) ? "Success" : "Failed";
 	}
 
 }

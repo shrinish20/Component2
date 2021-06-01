@@ -101,7 +101,7 @@ public class TweetController {
 		tweet.setReply(Collections.emptyList());
 		tweet.setPostedDate((new Timestamp(new Date().getTime())).toString());
 		String result = tweetService.postTweet(tweet, loginId);
-		kafkaProducerService.publishMessage(tweet.getTweetMessage(), loginId);
+		//kafkaProducerService.publishMessage(tweet.getTweetMessage(), loginId);
 		if ("Success".equalsIgnoreCase(result)) {
 			response = new CustomResponse(HttpStatus.CREATED, TweetConstant.TWEET_SUCCESS, LocalDateTime.now());
 		} else {

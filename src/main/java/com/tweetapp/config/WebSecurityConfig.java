@@ -3,9 +3,11 @@ package com.tweetapp.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,7 +32,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers("/api/v1.0/tweets/login","/api/v1.0/tweets/register", "/api/v1.0/tweets/refreshToken").permitAll().anyRequest()
+		http.cors().and().csrf().disable().authorizeRequests()
+				.antMatchers("/api/v1.0/tweets/login", "/api/v1.0/tweets/register").permitAll()
+				.antMatchers(HttpMethod.GET, "/api/v1.0/tweets/user/search/*").permitAll()
+				.antMatchers(HttpMethod.POST, "/api/v1.0/tweets/resetPassword").permitAll()
+				.antMatchers("/v2/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**").permitAll().anyRequest()
 				.authenticated().and().exceptionHandling().authenticationEntryPoint(authenticationHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
@@ -46,17 +52,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
-
-//	
-//	@Bean
-//	CorsConfigurationSource corsConfigurationSource () {
-//		CorsConfiguration corsConfiguration = new CorsConfiguration();
-//		corsConfiguration.setAllowedOrigins(Arrays.asList("*"));
-//		corsConfiguration.setAllowedMethods(Arrays.asList("*"));
-//		corsConfiguration.setAllowedHeaders(Arrays.asList("*"));
-//		corsConfiguration.setAllowCredentials(true);
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", corsConfiguration);
-//        return source;		
-//	}	
 }

@@ -45,6 +45,9 @@ public class TweetReplyService {
 		LOGGER.info("Entering replyTweet() service :::: {}");
 		Tweet tweetObj = new Tweet();
 		TweetReply resObj = null;
+		User userObj = userRepo.findByLoginId(loginId);
+		tweetReply.setFirstName(userObj.getFirstName());
+		tweetReply.setLastName(userObj.getLastName());
 		tweetReply.setTweetId(id);
 		tweetReply.setLoginId(loginId);
 		tweetReply.setPostedDate(new Timestamp(new Date().getTime()).toString());
